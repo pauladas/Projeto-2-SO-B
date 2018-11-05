@@ -40,6 +40,7 @@ static unsigned
 minix_last_byte(struct inode *inode, unsigned long page_nr)
 {
 	unsigned last_byte = PAGE_SIZE;
+	printk("Minixmodule: dir.c minix_last_byte\n");
 
 	if (page_nr == (inode->i_size >> PAGE_SHIFT))
 		last_byte = inode->i_size & (PAGE_SIZE - 1);
@@ -51,6 +52,7 @@ static int dir_commit_chunk(struct page *page, loff_t pos, unsigned len)
 	struct address_space *mapping = page->mapping;
 	struct inode *dir = mapping->host;
 	int err = 0;
+	printk("Minixmodule: dir.c dir_commit_chunk\n");
 	block_write_end(NULL, mapping, pos, len, len, page, NULL);
 
 	if (pos+len > dir->i_size) {
@@ -68,6 +70,7 @@ static struct page * dir_get_page(struct inode *dir, unsigned long n)
 {
 	struct address_space *mapping = dir->i_mapping;
 	struct page *page = read_mapping_page(mapping, n, NULL);
+	printk("Minixmodule: dir.c dir_get_page\n");
 	if (!IS_ERR(page))
 		kmap(page);
 	return page;
@@ -75,6 +78,7 @@ static struct page * dir_get_page(struct inode *dir, unsigned long n)
 
 static inline void *minix_next_entry(void *de, struct minix_sb_info *sbi)
 {
+	printk("Minixmodule: dir.c minix_next_entry\n");
 	return (void*)((char*)de + sbi->s_dirsize);
 }
 
@@ -88,6 +92,7 @@ static int minix_readdir(struct file *file, struct dir_context *ctx)
 	unsigned long pos = ctx->pos;
 	unsigned offset;
 	unsigned long n;
+	printk("Minixmodule: dir.c minix_readdir\n");
 
 	ctx->pos = pos = ALIGN(pos, chunk_size);
 	if (pos >= inode->i_size)
@@ -135,6 +140,7 @@ static int minix_readdir(struct file *file, struct dir_context *ctx)
 static inline int namecompare(int len, int maxlen,
 	const char * name, const char * buffer)
 {
+	printk("Minixmodule: dir.c namecompare\n");
 	if (len < maxlen && buffer[len])
 		return 0;
 	return !memcmp(name, buffer, len);
@@ -159,6 +165,7 @@ minix_dirent *minix_find_entry(struct dentry *dentry, struct page **res_page)
 	unsigned long npages = dir_pages(dir);
 	struct page *page = NULL;
 	char *p;
+	printk("Minixmodule: dir.c minix_find_entry\n");
 
 	char *namx;
 	__u32 inumber;
@@ -214,6 +221,7 @@ int minix_add_link(struct dentry *dentry, struct inode *inode)
 	int err;
 	char *namx = NULL;
 	__u32 inumber;
+	printk("Minixmodule: dir.c minix_add_link\n");
 
 	/*
 	 * We take care of directory expansion in the same loop
@@ -294,6 +302,7 @@ int minix_delete_entry(struct minix_dir_entry *de, struct page *page)
 	struct minix_sb_info *sbi = minix_sb(inode->i_sb);
 	unsigned len = sbi->s_dirsize;
 	int err;
+	printk("Minixmodule: dir.c minix_delete_entry\n");
 
 	lock_page(page);
 	err = minix_prepare_chunk(page, pos, len);
@@ -318,6 +327,7 @@ int minix_make_empty(struct inode *inode, struct inode *dir)
 	struct minix_sb_info *sbi = minix_sb(inode->i_sb);
 	char *kaddr;
 	int err;
+	printk("Minixmodule: dir.c minix_make_empty\n");
 
 	if (!page)
 		return -ENOMEM;
@@ -365,6 +375,7 @@ int minix_empty_dir(struct inode * inode)
 	struct minix_sb_info *sbi = minix_sb(inode->i_sb);
 	char *name;
 	__u32 inumber;
+	printk("Minixmodule: dir.c minix_empty_dir\n");
 
 	for (i = 0; i < npages; i++) {
 		char *p, *kaddr, *limit;
@@ -417,6 +428,7 @@ void minix_set_link(struct minix_dir_entry *de, struct page *page,
 	loff_t pos = page_offset(page) +
 			(char *)de-(char*)page_address(page);
 	int err;
+	printk("Minixmodule: dir.c minix_set_link\n");
 
 	lock_page(page);
 
@@ -440,6 +452,7 @@ struct minix_dir_entry * minix_dotdot (struct inode *dir, struct page **p)
 	struct page *page = dir_get_page(dir, 0);
 	struct minix_sb_info *sbi = minix_sb(dir->i_sb);
 	struct minix_dir_entry *de = NULL;
+	printk("Minixmodule: dir.c minix_dotdot\n");
 
 	if (!IS_ERR(page)) {
 		de = minix_next_entry(page_address(page), sbi);
@@ -453,6 +466,7 @@ ino_t minix_inode_by_name(struct dentry *dentry)
 	struct page *page;
 	struct minix_dir_entry *de = minix_find_entry(dentry, &page);
 	ino_t res = 0;
+	printk("Minixmodule: dir.c minix_inode_by_name\n");
 
 	if (de) {
 		struct address_space *mapping = page->mapping;

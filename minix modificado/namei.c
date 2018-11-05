@@ -14,6 +14,7 @@ static int add_nondir(struct dentry *dentry, struct inode *inode)
 		d_instantiate(dentry, inode);
 		return 0;
 	}
+	printk("Minixmodule: namei.c add_nondir\n");
 	inode_dec_link_count(inode);
 	iput(inode);
 	return err;
@@ -23,6 +24,8 @@ static struct dentry *minix_lookup(struct inode * dir, struct dentry *dentry, un
 {
 	struct inode * inode = NULL;
 	ino_t ino;
+
+	printk("Minixmodule: namei.c minix_lookup\n");
 
 	if (dentry->d_name.len > minix_sb(dir->i_sb)->s_namelen)
 		return ERR_PTR(-ENAMETOOLONG);
@@ -42,6 +45,8 @@ static int minix_mknod(struct inode * dir, struct dentry *dentry, umode_t mode, 
 	int error;
 	struct inode *inode;
 
+	printk("Minixmodule: namei.c minix_mknod\n");
+
 	if (!old_valid_dev(rdev))
 		return -EINVAL;
 
@@ -58,6 +63,7 @@ static int minix_mknod(struct inode * dir, struct dentry *dentry, umode_t mode, 
 static int minix_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
 {
 	int error;
+	printk("Minixmodule: namei.c minix_tmpfile\n");
 	struct inode *inode = minix_new_inode(dir, mode, &error);
 	if (inode) {
 		minix_set_inode(inode, 0);
@@ -70,6 +76,7 @@ static int minix_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
 static int minix_create(struct inode *dir, struct dentry *dentry, umode_t mode,
 		bool excl)
 {
+	printk("Minixmodule: namei.c minix_create\n");
 	return minix_mknod(dir, dentry, mode, 0);
 }
 
@@ -79,6 +86,7 @@ static int minix_symlink(struct inode * dir, struct dentry *dentry,
 	int err = -ENAMETOOLONG;
 	int i = strlen(symname)+1;
 	struct inode * inode;
+	printk("Minixmodule: namei.c minix_symlink\n");
 
 	if (i > dir->i_sb->s_blocksize)
 		goto out;
@@ -106,6 +114,7 @@ static int minix_link(struct dentry * old_dentry, struct inode * dir,
 	struct dentry *dentry)
 {
 	struct inode *inode = d_inode(old_dentry);
+	printk("Minixmodule: namei.c minix_link\n");
 
 	inode->i_ctime = current_time(inode);
 	inode_inc_link_count(inode);
@@ -117,6 +126,7 @@ static int minix_mkdir(struct inode * dir, struct dentry *dentry, umode_t mode)
 {
 	struct inode * inode;
 	int err;
+	printk("Minixmodule: namei.c minix_mkdir\n");
 
 	inode_inc_link_count(dir);
 
@@ -155,6 +165,7 @@ static int minix_unlink(struct inode * dir, struct dentry *dentry)
 	struct inode * inode = d_inode(dentry);
 	struct page * page;
 	struct minix_dir_entry * de;
+	printk("Minixmodule: namei.c minix_unlink\n");
 
 	de = minix_find_entry(dentry, &page);
 	if (!de)
@@ -174,6 +185,7 @@ static int minix_rmdir(struct inode * dir, struct dentry *dentry)
 {
 	struct inode * inode = d_inode(dentry);
 	int err = -ENOTEMPTY;
+	printk("Minixmodule: namei.c minix_rmdir\n");
 
 	if (minix_empty_dir(inode)) {
 		err = minix_unlink(dir, dentry);
@@ -196,6 +208,7 @@ static int minix_rename(struct inode * old_dir, struct dentry *old_dentry,
 	struct page * old_page;
 	struct minix_dir_entry * old_de;
 	int err = -ENOENT;
+	printk("Minixmodule: namei.c minix_rename\n");
 
 	if (flags & ~RENAME_NOREPLACE)
 		return -EINVAL;
