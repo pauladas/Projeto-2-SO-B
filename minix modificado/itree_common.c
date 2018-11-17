@@ -50,6 +50,7 @@ static inline Indirect *get_branch(struct inode *inode,
 		bh = sb_bread(sb, block_to_cpu(p->key));
 		if (!bh)
 			goto failure;
+		//Decifrar bh->b_data
 		read_lock(&pointers_lock);
 		if (!verify_chain(chain, p))
 			goto changed;
@@ -93,6 +94,7 @@ static int alloc_branch(struct inode *inode,
 		lock_buffer(bh);
 		memset(bh->b_data, 0, bh->b_size);
 		branch[n].bh = bh;
+		//Cifra o bh->b_data aqui
 		branch[n].p = (block_t*) bh->b_data + offsets[n];
 		*branch[n].p = branch[n].key;
 		set_buffer_uptodate(bh);
