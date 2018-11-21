@@ -1,0 +1,76 @@
+Provavel Alvo
+
+file.c
+
+const struct file_operations minix_file_operations = {
+	.llseek		= generic_file_llseek,
+    ////////// ESSES DOIS /////////////
+	.read_iter	= generic_file_read_iter,
+	.write_iter	= generic_file_write_iter,
+    ///////////////////////////////////
+	.mmap		= generic_file_mmap,
+	.fsync		= generic_file_fsync,
+	.splice_read	= generic_file_splice_read,
+}
+
+Como:
+Substituir as funcoes generic pelas nossas.
+    - Write: 
+        cifrar conteudo
+        chamar funcao generica
+    - Read:
+        decifrar retorno dela
+        retornar conteudo decifrado
+
+O que elas recebem (tirado da biblioteca fs.h que eh importada pelo minix.h):
+
+    - extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
+
+    - extern ssize_t generic_file_read_iter(struct kiocb *, struct iov_iter *);
+
+O que eh kiocb:
+
+    struct kiocb {
+        struct file		*ki_filp;
+        loff_t			ki_pos;
+        void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
+        void			*private;
+        int			ki_flags;
+    };
+
+    https://books.google.com.br/books?id=h0lltXyJ8aIC&pg=PT649&lpg=PT649&dq=struct+kiocb&source=bl&ots=gP3nNWccGS&sig=a72_Tzs33F7GCw0vBEwm8RBKH7o&hl=pt-BR&sa=X&ved=2ahUKEwj3ov-IxebeAhUMHZAKHRo9DdcQ6AEwBHoECAUQAQ#v=onepage&q=struct%20kiocb&f=false
+
+O que eh iov_iter:
+
+    struct iov_iter {
+        int type;
+        size_t iov_offset;
+        size_t count;
+        union {
+            const struct iovec *iov;
+            const struct kvec *kvec;
+            const struct bio_vec *bvec;
+            struct pipe_inode_info *pipe;
+        };
+        union {
+            unsigned long nr_segs;
+            struct {
+                int idx;
+                int start_idx;
+            };
+	    };
+    };
+
+    struct iovec
+    {
+        void __user *iov_base;	/* BSD uses caddr_t (1003.1g requires void *) */
+        __kernel_size_t iov_len; /* Must be size_t (1003.1g) */
+    };
+
+    https://stackoverflow.com/questions/41074458/what-is-the-purpose-of-structure-iov-iter-in-linux
+    https://lwn.net/Articles/625077/
+
+
+Livro com explicacao de como funciona as funcoes genericas:
+
+https://books.google.com.br/books?id=h0lltXyJ8aIC&lpg=PT649&ots=gP3nNWccGS&dq=struct%20kiocb&hl=pt-BR&pg=PT649#v=onepage&q=struct%20kiocb&f=false
