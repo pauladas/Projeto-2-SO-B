@@ -13,20 +13,58 @@
  * We have mostly NULLs here: the current defaults are OK for
  * the minix filesystem.
  */
+ static ssize_t mitm_read_iter (struct kiocb *kio, struct iov_iter *iov);
+ static ssize_t mitm_write_iter (struct kiocb *kio, struct iov_iter *iov);
+
 const struct file_operations minix_file_operations = {
-	.llseek		= generic_file_llseek,
-	.read_iter	= generic_file_read_iter,
-	.write_iter	= generic_file_write_iter,
-	.mmap		= generic_file_mmap,
-	.fsync		= generic_file_fsync,
+	.llseek				= generic_file_llseek,
+	.read_iter		= mitm_read_iter,
+	.write_iter		= mitm_write_iter,
+	// .read 				= mitm_read,
+	// .write				= mitm_write,
+	.mmap					= generic_file_mmap,
+	.fsync				= generic_file_fsync,
 	.splice_read	= generic_file_splice_read,
 };
+
+// static int mitm_read (struct inode * inode, struct file * filp, char * buf, int count)
+// {
+// 	int retorno;
+// 	printk("Minixmodule: file.c mitm_read");
+//   retorno = generic_file_read(inode,filp,buf,count)
+// 	return retorno;
+// }
+//
+// static ssize_t mitm_write (struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+// {
+// 	ssize_t retorno;
+// 	printk("Minixmodule: file.c mitm_write");
+// 	retorno = generic_file_write(file,buf,count,ppos);
+//   return retorno;
+// }
+
+static ssize_t mitm_read_iter (struct kiocb *kio, struct iov_iter *iov)
+{
+	ssize_t retorno;
+	/* Descobrir como pegar os dados da kiocb e da iov_iter para assim descriptografar os dados */
+	printk("Minixmodule: file.c mitm_read_iter");
+	retorno = generic_file_read_iter(kio,iov);
+	return (retorno);
+}
+
+static ssize_t mitm_write_iter (struct kiocb *kio, struct iov_iter *iov)
+{
+	ssize_t retorno;
+	/* Descobrir como pegar os dados da kiocb e da iov_iter para assim encriptografar os dados */
+	printk("Minixmodule: file.c mitm_write_iter");
+  retorno =	generic_file_write_iter(kio,iov);
+	return(retorno);
+}
 
 static int minix_setattr(struct dentry *dentry, struct iattr *attr)
 {
 	struct inode *inode = d_inode(dentry);
 	int error;
-	printk("Minixmodule: file.c minix_setattr\n");
 
 	error = setattr_prepare(dentry, attr);
 	if (error)

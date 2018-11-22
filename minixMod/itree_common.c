@@ -11,14 +11,12 @@ static DEFINE_RWLOCK(pointers_lock);
 
 static inline void add_chain(Indirect *p, struct buffer_head *bh, block_t *v)
 {
-	printk("Minixmodule: itree_common.c add_chain\n");
 	p->key = *(p->p = v);
 	p->bh = bh;
 }
 
 static inline int verify_chain(Indirect *from, Indirect *to)
 {
-	printk("Minixmodule: itree_common.c verify_chain\n");
 	while (from <= to && from->key == *from->p)
 		from++;
 	return (from > to);
@@ -26,7 +24,6 @@ static inline int verify_chain(Indirect *from, Indirect *to)
 
 static inline block_t *block_end(struct buffer_head *bh)
 {
-	printk("Minixmodule: itree_common.c block_end\n");
 	return (block_t *)((char*)bh->b_data + bh->b_size);
 }
 
@@ -36,7 +33,6 @@ static inline Indirect *get_branch(struct inode *inode,
 					Indirect chain[DEPTH],
 					int *err)
 {
-	printk("Minixmodule: itree_common.c get_branch\n");
 	struct super_block *sb = inode->i_sb;
 	Indirect *p = chain;
 	struct buffer_head *bh;
@@ -76,7 +72,6 @@ static int alloc_branch(struct inode *inode,
 			     int *offsets,
 			     Indirect *branch)
 {
-	printk("Minixmodule: itree_common.c alloc_branch\n");
 	int n = 0;
 	int i;
 	int parent = minix_new_block(inode);
@@ -116,7 +111,6 @@ static inline int splice_branch(struct inode *inode,
 				     Indirect *where,
 				     int num)
 {
-	printk("Minixmodule: itree_common.c splice_branch\n");
 	int i;
 
 	write_lock(&pointers_lock);
@@ -152,7 +146,6 @@ changed:
 static int get_block(struct inode * inode, sector_t block,
 			struct buffer_head *bh, int create)
 {
-	printk("Minixmodule: itree_common.c get_block\n");
 	int err = -EIO;
 	int offsets[DEPTH];
 	Indirect chain[DEPTH];
@@ -215,7 +208,6 @@ changed:
 
 static inline int all_zeroes(block_t *p, block_t *q)
 {
-	printk("Minixmodule: itree_common.c all_zeroes\n");
 	while (p < q)
 		if (*p++)
 			return 0;
@@ -228,7 +220,6 @@ static Indirect *find_shared(struct inode *inode,
 				Indirect chain[DEPTH],
 				block_t *top)
 {
-	printk("Minixmodule: itree_common.c find_shared\n");
 	Indirect *partial, *p;
 	int k, err;
 
@@ -265,7 +256,6 @@ no_top:
 
 static inline void free_data(struct inode *inode, block_t *p, block_t *q)
 {
-	printk("Minixmodule: itree_common.c free_data\n");
 	unsigned long nr;
 
 	for ( ; p < q ; p++) {
@@ -279,7 +269,6 @@ static inline void free_data(struct inode *inode, block_t *p, block_t *q)
 
 static void free_branches(struct inode *inode, block_t *p, block_t *q, int depth)
 {
-	printk("Minixmodule: itree_common.c free_branches\n");
 	struct buffer_head * bh;
 	unsigned long nr;
 
@@ -304,7 +293,6 @@ static void free_branches(struct inode *inode, block_t *p, block_t *q, int depth
 
 static inline void truncate (struct inode * inode)
 {
-	printk("Minixmodule: itree_common.c truncate\n");
 	struct super_block *sb = inode->i_sb;
 	block_t *idata = i_data(inode);
 	int offsets[DEPTH];
@@ -362,7 +350,6 @@ do_indirects:
 
 static inline unsigned nblocks(loff_t size, struct super_block *sb)
 {
-	printk("Minixmodule: itree_common.c nblocks\n");
 	int k = sb->s_blocksize_bits - 10;
 	unsigned blocks, res, direct = DIRECT, i = DEPTH;
 	blocks = (size + sb->s_blocksize - 1) >> (BLOCK_SIZE_BITS + k);
