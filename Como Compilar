@@ -1,0 +1,12 @@
+Entrar em Root Permanente
+sudo su
+
+Para compilar o modulo - Dentro da pasta do codigo: (primeiro caminho eh a pasta dos headers do kernel) (segundo caminho eh a pasta com o codigo fonte do modulo)
+make -C /lib/modules/$(uname -r)/build M=$(pwd) modules
+
+Para Inserir o modulo (inserir o da pasta que acabou de ser compilada para evitar problemas)
+insmod minix.ko
+
+Para Descarregar o modulo
+rmmod minix.ko
+

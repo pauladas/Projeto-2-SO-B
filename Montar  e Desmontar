@@ -1,0 +1,6 @@
+Caso a imagem for montada via nautilus (interface grafica - dois cliques na img), os arquivos deverao ser acessados em /media/vinicius/disk.
+Criar os arquivos via terminal (touch arquivo.txt) ou (mkdir Diretorio)
+Encriptografar somente o conteudo dos arquivos.
+Nao encriptografar pastas nem nome dos diretorios.
+Funcoes: minix_writepage e minix_readpage
+
