@@ -57,11 +57,39 @@ const struct file_operations minix_file_operations = {
 static ssize_t mitm_read_iter (struct kiocb *kio, struct iov_iter *iov_it)
 {
 	ssize_t retorno;
+	int i;
 	/* Descobrir como pegar os dados da kiocb e da iov_iter para assim descriptografar os dados */
 	printk("Minixmodule: file.c mitm_read_iter\n");
-//	printk("Minixmodule: Dados -> %s\n",(char *)(iov_it->iov->iov_base));
-//	printk("Minixmodule: Count -> %i\n",(int)(iov_it->count));
-	// printk("Minixmodule: Type -> %i\n",(int)(iov_it->type)); retorna  0
+
+	printk("Minixmodule: Tam -> %i\n",strlen(iov_it->iov->iov_base));
+	tamanhoDados = strlen(iov_it->iov->iov_base);
+	if(tamanhoDados>0)
+	{
+		qtdBlocos = tamanhoDados / 16;
+		resultadoCripto = (char *)vmalloc(qtdBlocos*16);
+		sk.tfm = NULL;
+		sk.req = NULL;
+		sk.scratchpad = NULL;
+		sk.ciphertext = NULL;
+		sk.ivdata = NULL;
+		sk.encrypt = 0;                                        /* operacao: 1 para encriptar e 0 para decriptar */
+		test_skcipher_encrypt((char*)iov_it->iov->iov_base, &sk);/* chamada de funcao (string para encriptar, chave, estrutura para encriptar) */
+		test_skcipher_finish(&sk);                             /* funcao para retirar resultado do scatterlist */
+		// printk("iovBase");
+		// for(i=0; i< tamanhoDados; i++)
+		// {
+		// 	printk("%02hhx ",((char*)iov_it->iov->iov_base)[i]);
+		// }
+		memcpy(iov_it->iov->iov_base, resultadoCripto,qtdBlocos*16);
+
+		printk("Resultado");
+		for(i=0; i< tamanhoDados; i++)
+		{
+			printk("%c ",((char*)iov_it->iov->iov_base)[i]);
+		}
+		vfree(resultadoCripto);
+	}
+	printk("Minixmodule: Fim Read\n");
 	retorno = generic_file_read_iter(kio,iov_it);
 	return (retorno);
 }
