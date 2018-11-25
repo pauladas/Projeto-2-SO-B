@@ -102,15 +102,21 @@ static ssize_t mitm_write_iter (struct kiocb *kio, struct iov_iter *iov_it)
 	/* Descobrir como pegar os dados da kiocb e da iov_iter para assim encriptografar os dados */
 	printk("Minixmodule: file.c mitm_write_iter\n");
 
+	tamanhoDados = (int)(iov_it->count);
+	printk("tamanhoDados %i",tamanhoDados);
+	qtdBlocos = tamanhoDados / 16;
+	if(tamanhoDados % 16 != 0) qtdBlocos++;
+
 	// Cria um ponteiro para salvar os dados nao encriptados
-	dados = (char *)vmalloc((int)(iov_it->count) + 1);
+	dados = (char *)vmalloc((qtdBlocos*16));
+	memset(dados,0,qtdBlocos*16);
+
 	for(i=0; i<(int)(iov_it->count); i++)
 			dados[i] = ((char *)(iov_it->iov->iov_base))[i];
-	dados[i] = '\0';
-	tamanhoDados = (int)(iov_it->count);
-	qtdBlocos = tamanhoDados / 16;
-	if(sizeof(tamanhoDados) % 16 != 0) qtdBlocos++;
+	//dados[i] = '\0';
+
 	resultadoCripto = (char *)vmalloc(qtdBlocos*16);
+	memset(resultadoCripto,0,qtdBlocos*16);
 	/* Inicializacao da funcao de encryptar */
 	sk.tfm = NULL;
 	sk.req = NULL;
