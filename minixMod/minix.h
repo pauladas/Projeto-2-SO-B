@@ -7,12 +7,46 @@
 #include <linux/minix_fs.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
+#include <crypto/internal/skcipher.h>  /* Biblioteca para encriptar e decriptar */
+
 
 #define INODE_VERSION(inode)	minix_sb(inode->i_sb)->s_version
 #define MINIX_V1		0x0001		/* original minix fs */
 #define MINIX_V2		0x0002		/* minix V2 fs */
 #define MINIX_V3		0x0003		/* minix V3 fs */
+#define CIPHER_BLOCK_SIZE 16 		       /* tamanho do bloco para encriptacao */
+#define KEY_SIZE 256
 
+extern char *key;                                       /* Armazena a chave em CARACTERES passada como parametro na insercao do modulo -- Durante a conversao, o limite definido foi de 64 caracteres hexa de entrada ou seja, 32 bytes*/
+extern char keyHexa[(KEY_SIZE / 8) + 1];                      /* Armazena a chave HEXADECIMAL convertida a partir da chave em CARACTERES */
+extern char keyChar[(KEY_SIZE / 4) + 1];                  /* Representacao em caracteres da chave considerada em hexadecimal */
+extern int size_of_message;                             /* Guarda o tamanho da entrada quando o usuario grava alguma coisa no arquivo do modulo */
+extern int size_of_key;
+
+// struct iov_iter {
+// 			 int type;
+// 			 size_t iov_offset;
+// 			 size_t count;
+// 			 union {
+// 					 const struct iovec *iov;
+// 					 const struct kvec *kvec;
+// 					 const struct bio_vec *bvec;
+// 					 struct pipe_inode_info *pipe;
+// 			 };
+// 			 union {
+// 					 unsigned long nr_segs;
+// 					 struct {
+// 							 int idx;
+// 							 int start_idx;
+// 					 };
+// 		 };
+// 	 };
+//
+// 	 struct iovec
+// 	 {
+// 			 void __user *iov_base;	/* BSD uses caddr_t (1003.1g requires void *) */
+// 			 __kernel_size_t iov_len; /* Must be size_t (1003.1g) */
+// };
 /*
  * minix fs inode data in memory
  */

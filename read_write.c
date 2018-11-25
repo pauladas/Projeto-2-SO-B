@@ -1,4 +1,4 @@
-/* Projeto 1 - Modulo criptografico do kernel - Teste Usuario Read e Write
+/* Projeto 2 - Modulo criptografico do kernel - Teste Usuario Read e Write
  *  Bruno Kitaka        - 16156341
  *  Paulo Figueiredo    - 16043028
  *  Rafael Fioramonte   - 16032708
@@ -70,13 +70,14 @@ int main()
 
         mensagem[tamArquivo] = '\0';
 
-        printf("%s", conteudoArquivo);
+        printf("%s", mensagem);
         break;
 
       default:
         printf("Opcao invalida, tente novamente\n");
       }
       fclose(arquivo);
+
     }
   } while (opcao != 0);
 

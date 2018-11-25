@@ -20,16 +20,6 @@
 #include <linux/vfs.h>
 #include <linux/writeback.h>
 
-#define CIPHER_BLOCK_SIZE 16 		       /* tamanho do bloco para encriptacao */
-#define KEY_SIZE 256
-
-static char *key;                                       /* Armazena a chave em CARACTERES passada como parametro na insercao do modulo -- Durante a conversao, o limite definido foi de 64 caracteres hexa de entrada ou seja, 32 bytes*/
-static char keyHexa[(KEY_SIZE / 8) + 1];                      /* Armazena a chave HEXADECIMAL convertida a partir da chave em CARACTERES */
-static char keyChar[(KEY_SIZE / 4) + 1];                  /* Representacao em caracteres da chave considerada em hexadecimal */
-static struct skcipher_def sk;                          /* estrutura para funcao de encriptar */
-static int size_of_message;                             /* Guarda o tamanho da entrada quando o usuario grava alguma coisa no arquivo do modulo */
-static int size_of_key;
-
 module_param(key, charp, 0000);
 MODULE_PARM_DESC(key, "Chave recebida durante o carregamento");
 
@@ -38,6 +28,11 @@ static void  converterChar2Hexa(char *pChar, char *pHexa);
 static void  converterHexa2Char(char *pHexa, char *pChar);
 static int 	minix_statfs(struct dentry *dentry, struct kstatfs *buf);
 static int 	minix_remount (struct super_block * sb, int * flags, char * data);
+char *key;                                       /* Armazena a chave em CARACTERES passada como parametro na insercao do modulo -- Durante a conversao, o limite definido foi de 64 caracteres hexa de entrada ou seja, 32 bytes*/
+char keyHexa[(KEY_SIZE / 8) + 1];                      /* Armazena a chave HEXADECIMAL convertida a partir da chave em CARACTERES */
+char keyChar[(KEY_SIZE / 4) + 1];                  /* Representacao em caracteres da chave considerada em hexadecimal */
+int size_of_message;                             /* Guarda o tamanho da entrada quando o usuario grava alguma coisa no arquivo do modulo */
+int size_of_key;
 
 static void minix_evict_inode(struct inode *inode)
 {
@@ -686,7 +681,7 @@ static int __init init_minix_fs(void)
 	if (size_of_key > 64) size_of_key=64;
 	size_of_message = size_of_key;
 	key[size_of_key] = '\0';
-	pr_info("Minixmodule: Modificacao file.c");
+	pr_info("Minixmodule: Modificacao file.c (criptografia) e inode.c (chave)");
 	pr_info("Minixmodule: Chave (Key) BRUTA recebida: %s\n", key);
   converterChar2Hexa(key, keyHexa);     /* Salva em keyHexa a sequencia de bytes que representa os caracteres em hexadecimal lidos no carregamento do modulo */
 	if(size_of_key % 2 != 0)
