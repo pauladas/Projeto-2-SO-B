@@ -19,68 +19,90 @@
 int main()
 {
   int retorno, opcao;
-  int caractere;
   int tamArquivo;
-  char mensagem[5000];
+  char mensagem[5000], mensagem2[5000];
   char caminhoArquivo[500];
 
-  int i, j;
   FILE *arquivo;
-
   clear();
   printf("Teste Minixmodule Projeto 2\n");
 
   do
   {
     printf(".::MENU::.\n");
-    printf("1 - Gravar\n");
-    printf("2 - Ler\n");
+    printf("1 - Criar\n");
+    printf("2 - Atualizar\n");
     printf("0 - Sair\n");
     printf("Selecione sua opcao: ");
     scanf("%i", &opcao);
     getchar();
 
-    if (opcao != 0)
+    printf("Digite o caminho do arquivo a ser aberto: ");
+    scanf("%s", caminhoArquivo);
+    getchar();
+
+    switch (opcao)
     {
-      printf("Digite o caminho do arquivo a ser aberto: ");
-      scanf("%s", caminhoArquivo);
-      getchar();
-      arquivo = fopen(caminhoArquivo, "wb+"); /* Realiza a abertura do arquivo do modulo e salva o file descriptor em arquivo */
+    case 0:
+      break;
+
+    case 1:
+      arquivo = fopen(caminhoArquivo, "wb+");
+
       if (!arquivo)
       {
         perror("Erro ao abrir o arquivo\n");
         return errno;
       }
 
-      switch (opcao)
+      printf("Digite o que deseja escrever no arquivo %s: ", caminhoArquivo);
+      scanf("%[^\n]%*c", mensagem);
+      fwrite(&mensagem, sizeof(char), strlen(mensagem), arquivo); /* Enviando a string para o modulo criptografico */
+
+      break;
+
+    case 2:
+      arquivo = fopen(caminhoArquivo, "ab+"); /* abre o arquivo para append (leitura inicio escrita final) */
+
+      if (!arquivo)
       {
-      case 1:
-        printf("Digite o que deseja escrever no arquivo %s: ", caminhoArquivo);
-        scanf("%[^\n]%*c", mensagem);
-        fwrite(&mensagem, sizeof(char), strlen(mensagem), arquivo); /* Enviando a string para o modulo criptografico */
-        break;
-
-      case 2:
-        tamArquivo = 0;
-        printf("Dado lido do arquivo %s:\n", caminhoArquivo);
-        while (fread(&mensagem[tamArquivo], sizeof(char), 1, arquivo) != 0)
-        {
-          tamArquivo++;
-        }
-
-        mensagem[tamArquivo] = '\0';
-
-        printf("%s", mensagem);
-        break;
-
-      default:
-        printf("Opcao invalida, tente novamente\n");
+        perror("Erro ao abrir o arquivo\n");
+        return errno;
       }
-      fclose(arquivo);
 
+      tamArquivo = 0;
+
+      printf("Dado lido do arquivo %s:\n", caminhoArquivo);
+
+      while (fread(&mensagem[tamArquivo], sizeof(char), 1, arquivo) != 0)
+      {
+        tamArquivo++;
+      }
+
+      mensagem[tamArquivo] = '\0';
+
+      printf("%s", mensagem);
+
+      printf("O que deseja escrever no arquivo:\n");
+
+      scanf("%[^\n]%*c", mensagem2);
+
+      fwrite(&mensagem, sizeof(char), strlen(mensagem), arquivo);
+
+      break;
+
+    default:
+
+      printf("Opcao invalida, tente novamente\n");
+
+      break;
     }
+
+    fclose(arquivo);
+
   } while (opcao != 0);
 
   printf("Fim do programa de testes\n");
+
   return 0;
 }
