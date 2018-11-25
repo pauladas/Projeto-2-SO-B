@@ -60,6 +60,7 @@ static ssize_t mitm_read_iter (struct kiocb *kio, struct iov_iter *iov_it)
 	int i;
 	/* Descobrir como pegar os dados da kiocb e da iov_iter para assim descriptografar os dados */
 	printk("Minixmodule: file.c mitm_read_iter\n");
+	retorno = generic_file_read_iter(kio,iov_it);
 
 	printk("Minixmodule: Tam -> %i\n",strlen(iov_it->iov->iov_base));
 	tamanhoDados = strlen(iov_it->iov->iov_base);
@@ -90,7 +91,6 @@ static ssize_t mitm_read_iter (struct kiocb *kio, struct iov_iter *iov_it)
 		vfree(resultadoCripto);
 	}
 	printk("Minixmodule: Fim Read\n");
-	retorno = generic_file_read_iter(kio,iov_it);
 	return (retorno);
 }
 
@@ -103,7 +103,6 @@ static ssize_t mitm_write_iter (struct kiocb *kio, struct iov_iter *iov_it)
 	printk("Minixmodule: file.c mitm_write_iter\n");
 
 	tamanhoDados = (int)(iov_it->count);
-	printk("tamanhoDados %i",tamanhoDados);
 	qtdBlocos = tamanhoDados / 16;
 	if(tamanhoDados % 16 != 0) qtdBlocos++;
 
