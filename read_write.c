@@ -36,6 +36,7 @@ int main()
     printf("Selecione sua opcao: ");
     scanf("%i", &opcao);
     getchar();
+    clear();
 
     if (opcao != 0)
     {
@@ -49,7 +50,8 @@ int main()
         break;
 
       case 1:
-        arquivo = fopen(caminhoArquivo, "wb+");
+        printf("Opcao 1: Criar Arquivo\n");
+        arquivo = fopen(caminhoArquivo, "w+");
 
         if (!arquivo)
         {
@@ -66,7 +68,8 @@ int main()
         break;
 
       case 2:
-        arquivo = fopen(caminhoArquivo, "rb+"); /* abre o arquivo para leitura */
+        printf("Opcao 2: Atualizar Arquivo\n");
+        arquivo = fopen(caminhoArquivo, "r"); /* abre o arquivo para leitura */
 
         if (!arquivo)
         {
@@ -75,8 +78,8 @@ int main()
         }
 
         tamArquivo = -1;
-
-        printf("Dado lido do arquivo %s:\n", caminhoArquivo);
+        printf("***ATENÇÃO: SEU ARQUIVO SERÁ REESCRITO***\n");
+        printf("Dado lido do arquivo %s: ", caminhoArquivo);
 
         do
         {
@@ -89,11 +92,11 @@ int main()
 
         fclose(arquivo);
 
-        printf("O que deseja escrever no arquivo:\n ATENÇÃO: SEU ARQUIVO SERÁ REESCRITO\n");
+        printf("\nO que deseja escrever no arquivo: ");
 
         scanf("%[^\n]%*c", mensagem2);
 
-        arquivo = fopen(caminhoArquivo, "wb+"); /* abre o arquivo para escrita */
+        arquivo = fopen(caminhoArquivo, "w+"); /* abre o arquivo para escrita */
 
         if (!arquivo)
         {
