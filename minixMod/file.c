@@ -73,9 +73,6 @@ static ssize_t mitm_write_iter (struct kiocb *kio, struct iov_iter *iov_it)
   struct iovec *modificado = iov_it->iov;
 	/* Descobrir como pegar os dados da kiocb e da iov_iter para assim encriptografar os dados */
 	printk("Minixmodule: file.c mitm_write_iter\n");
-	//printk("Minixmodule: Dados -> %s\n",(char *)(iov_it->iov->iov_base)); - ponteiro para os dados
-	//printk("Minixmodule: Length -> %i\n",(int)(iov_it->iov->iov_len));// - tamanho dos dados a serem gravados
-	// printk("Minixmodule: Type -> %i\n",(int)(iov_it->type)); - retorna 1
 
 	// Cria um ponteiro para salvar os dados nao encriptados
 	dados = (char *)vmalloc((int)(iov_it->count) + 1);
@@ -95,47 +92,19 @@ static ssize_t mitm_write_iter (struct kiocb *kio, struct iov_iter *iov_it)
 	sk.encrypt = 1;                                        /* operacao: 1 para encriptar e 0 para decriptar */
 	test_skcipher_encrypt(dados, &sk);/* chamada de funcao (string para encriptar, chave, estrutura para encriptar) */
 	test_skcipher_finish(&sk);                             /* funcao para retirar resultado do scatterlist */
-	//printk("MinixModule: CryptoWrite: %s",resultadoCripto);
-	//printk("MinixModule: Tamanho: %i",tamanhoDados);
-	//printk("MinixModule: qtdBlocos: %i",qtdBlocos);
-
-	// vfree(resultadoCripto);
-	// sk.tfm = NULL;
-	// sk.req = NULL;
-	// sk.scratchpad = NULL;
-	// sk.ciphertext = NULL;
-	// sk.ivdata = NULL;
-	// sk.encrypt = 0;                                        /* operacao: 1 para encriptar e 0 para decriptar */
-	// test_skcipher_encrypt(resultadoCripto, &sk);/* chamada de funcao (string para encriptar, chave, estrutura para encriptar) */
-	// test_skcipher_finish(&sk);
-	// printk("MinixModule: UNCRYPTO: %s",resultadoCripto);
-	// printk("MinixModule: qtdBlocosResult: %i",qtdBlocos);
-	// printk("MinixModule: resultadoSize: %i",sizeof(resultadoCripto));
 
 	modificado->iov_len = qtdBlocos*16;
-  // modificado->iov_base = resultadoCripto;
-	// printk("Modificado");
-	// for(i=0;i<modificado->iov_len;i++)
-	// {
-	// 	printk("%02hhx ",((char*)modificado->iov_base)[i]);
-	// }
-	// printk("iov_it");
-	// for(i=0;i<modificado->iov_len;i++)
-	// {
-	// 	printk("%02hhx ",((char*)iov_it->iov->iov_base)[i]);
-	// }
+	memcpy(iov_it->iov->iov_base, resultadoCripto,qtdBlocos*16);
 
 	iov_it->count =(size_t) qtdBlocos*16;
 
-	printk("Tam: %i",(int)iov_it->iov->iov_len);
-	//printk("CriptoResult: %s",resultadoCripto);
-	//printk("CriptoIOV: %s",(char *)iov_it->iov->iov_base);
   /* O write retorna o tamanho dos dados facilitando a encriptacao */
 	/* Eh o mais facil -> Ideia: Pegar os dados (ponteiro (char *)(iov_it->iov->iov_base))) e a quantidade de dados (ponteiro (int)(iov_it->iov->iov_len)))
 		 Quebrar em blocos, encriptografar e salvar em uma estrutura auxiliar (vmalloc) e copiar o ponteiro para iov_base */
   retorno =	generic_file_write_iter(kio,iov_it);
 	vfree(dados);
 	vfree(resultadoCripto);
+	printk("Minixmodule: Fim Write\n");
 	return(retorno);
 }
 
