@@ -87,7 +87,7 @@ int main()
 
       scanf("%[^\n]%*c", mensagem2);
 
-      fwrite(&mensagem, sizeof(char), strlen(mensagem), arquivo);
+      fwrite(&mensagem2, sizeof(char), strlen(mensagem2), arquivo);
 
       break;
 
