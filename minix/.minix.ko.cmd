@@ -1,0 +1,1 @@
+cmd_/home/vinicius/Desktop/Projeto-2-SO-B/minixMod/minix.ko := ld -r -m elf_x86_64 -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /home/vinicius/Desktop/Projeto-2-SO-B/minixMod/minix.ko /home/vinicius/Desktop/Projeto-2-SO-B/minixMod/minix.o /home/vinicius/Desktop/Projeto-2-SO-B/minixMod/minix.mod.o ;  true

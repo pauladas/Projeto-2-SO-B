@@ -13,6 +13,7 @@ Raíssa Davinha - 15032006
 Vinícius Trevisan - 16011231
 ~~~
 
+<<<<<<< HEAD
 ### 1. Introdução
 Este projeto deverá permitir ao aluno familiarizar-se com os detalhes de implementação de um sistema de arquivos minix cifrado que faz uso da API criptográfica do kernel Linux. Espera-se que ao final do projeto, cada aluno seja capaz de implementar, compilar, instalar e testar um novo módulo de kernel que permita ao usuário montar um sistema de arquivos minix em seu sistema Linux e armazenar arquivos de forma cifrada.
 
@@ -45,3 +46,10 @@ O projeto deve ser acompanhado de um relatório com as seguintes partes obrigat�
 - Descrição dos resultados obtidos, detalhando o processo de compilação, instalação e teste do módulo de kernel desenvolvido, demonstrando as funcionalidades implementadas através de imagens e textos descrevendo o que está sendo testado e os resultados esperados e obtidos;
 - Conclusão indicando o que foi aprendido com o experimento.
 
+=======
+## Tarefas de Vinicius Trevisan
+~~~
+29/10 - Estudo do problema, como resolvê-lo e por onde começar.
+29/10 - Criação de um arquivo utilizando o sistema minix não modificado baseado no tutorial disponibilizado pelo professor
+~~~
+>>>>>>> 8f772c4459431f7bef98d9fe447e063bffa98732
