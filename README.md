@@ -13,7 +13,6 @@ Raíssa Davinha - 15032006
 Vinícius Trevisan - 16011231
 ~~~
 
-<<<<<<< HEAD
 ### 1. Introdução
 Este projeto deverá permitir ao aluno familiarizar-se com os detalhes de implementação de um sistema de arquivos minix cifrado que faz uso da API criptográfica do kernel Linux. Espera-se que ao final do projeto, cada aluno seja capaz de implementar, compilar, instalar e testar um novo módulo de kernel que permita ao usuário montar um sistema de arquivos minix em seu sistema Linux e armazenar arquivos de forma cifrada.
 
@@ -53,3 +52,22 @@ O projeto deve ser acompanhado de um relatório com as seguintes partes obrigat�
 29/10 - Criação de um arquivo utilizando o sistema minix não modificado baseado no tutorial disponibilizado pelo professor
 ~~~
 >>>>>>> 8f772c4459431f7bef98d9fe447e063bffa98732
+
+=======
+## Como executar
+=======
+
+1) Compilar o módulo minix utilizando o comando "make -C /lib/modules/$(uname-r)/build M=$(pwd) modules"
+
+2) Inserir o módulo com o comando " insmod minix.ko key="abcd" "
+
+3) Criar imagem minix com os seguintes comandos:
+	dd if=/dev/zero of=teste.img bs=1k count=10000
+	losetup /dev/loop0 teste.img
+	mkfs -t minix /dev/loop0
+	mkdir /mnt/point1
+	mount -t minix /dev/loop0 /mnt/point1
+
+4) Compilar o programa de usuário "gcc -o prog prog.c"
+
+5) Executar o programa de usuário
