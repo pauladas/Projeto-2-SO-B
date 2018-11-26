@@ -46,12 +46,6 @@ O projeto deve ser acompanhado de um relatório com as seguintes partes obrigat�
 - Conclusão indicando o que foi aprendido com o experimento.
 
 =======
-## Tarefas de Vinicius Trevisan
-~~~
-29/10 - Estudo do problema, como resolvê-lo e por onde começar.
-29/10 - Criação de um arquivo utilizando o sistema minix não modificado baseado no tutorial disponibilizado pelo professor
-~~~
->>>>>>> 8f772c4459431f7bef98d9fe447e063bffa98732
 
 =======
 ## Como executar
